@@ -7,58 +7,48 @@ import {
 } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { TooltipButton } from "./ToolTipButton";
-import { VolumeX, Volume2 } from "lucide-react"; 
-import {RecordAnswer} from "./RecordAnswer";
+import { VolumeX, Volume2 } from "lucide-react";
+import { RecordAnswer } from "./RecordAnswer";
 
 interface QuestionSectionProps {
   questions: { question: string; answer: string }[];
 }
 
-
 export const QuestionForm = ({ questions }: QuestionSectionProps) => {
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [currentSpeech, setCurrentSpeech] =
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isWebCam, setIsWebCam] = useState(false);
 
-    useState<SpeechSynthesisUtterance | null>(null);
+  const handlePlayQuestion = (qst: string) => {
+    if (!("speechSynthesis" in window)) return;
 
-    const [isWebCam,setIsWebCam] = useState<boolean>(false);
-
-    const handlePlayQuestion = (qst: string) => {
-      if (!("speechSynthesis" in window)) return;
-    
-      const speakNow = () => {
-        const voices = window.speechSynthesis.getVoices();
-        if (voices.length === 0) {
-          alert("No voices available. Try using Firefox or install speech engine on Linux.");
-          return;
-        }
-    
-        const utterance = new SpeechSynthesisUtterance(qst);
-        utterance.voice = voices[0]; // Choose the first available voice
-        window.speechSynthesis.cancel(); // Stop any ongoing speech
-        window.speechSynthesis.speak(utterance);
-    
-        setIsPlaying(true);
-        setCurrentSpeech(utterance);
-    
-        utterance.onend = () => {
-          setIsPlaying(false);
-          setCurrentSpeech(null);
-        };
-      };
-    
+    const speakNow = () => {
       const voices = window.speechSynthesis.getVoices();
+
       if (voices.length === 0) {
-        // Wait for voices to load
-        window.speechSynthesis.onvoiceschanged = () => {
-          speakNow();
-        };
-      } else {
-        speakNow();
+        alert("No voices available. Try using Firefox or install a speech engine on Linux.");
+        return;
       }
+
+      const utterance = new SpeechSynthesisUtterance(qst);
+      utterance.voice = voices[0]; // Use default voice
+
+      window.speechSynthesis.cancel(); // Stop previous speech
+      window.speechSynthesis.speak(utterance);
+
+      setIsPlaying(true);
+
+      utterance.onend = () => {
+        setIsPlaying(false);
+      };
     };
-    
-    
+
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length === 0) {
+      window.speechSynthesis.onvoiceschanged = speakNow;
+    } else {
+      speakNow();
+    }
+  };
 
   return (
     <div className="w-full min-h-96 border rounded-md p-4">
@@ -70,18 +60,18 @@ export const QuestionForm = ({ questions }: QuestionSectionProps) => {
         <TabsList className="bg-transparent w-full flex flex-wrap items-center justify-start gap-4">
           {questions?.map((tab, i) => (
             <TabsTrigger
+              key={tab.question}
+              value={tab.question}
               className={cn(
                 "data-[state=active]:bg-emerald-200 data-[state=active]:shadow-md text-xs px-2"
               )}
-              key={tab.question}
-              value={tab.question}
             >
               {`Question #${i + 1}`}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        {questions?.map((tab, i) => (
+        {questions?.map((tab) => (
           <TabsContent key={tab.question} value={tab.question}>
             <p className="text-base text-left tracking-wide text-neutral-500">
               {tab.question}
@@ -101,7 +91,11 @@ export const QuestionForm = ({ questions }: QuestionSectionProps) => {
               />
             </div>
 
-            <RecordAnswer question = {tab} isWebCam = {isWebCam} setIsWebCam = {setIsWebCam} />
+            <RecordAnswer
+              question={tab}
+              isWebCam={isWebCam}
+              setIsWebCam={setIsWebCam}
+            />
           </TabsContent>
         ))}
       </Tabs>

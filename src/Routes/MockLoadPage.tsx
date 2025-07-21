@@ -14,7 +14,7 @@ import Webcam from "react-webcam";
 export const MockLoadPage = () => {
   const { interviewId } = useParams<{ interviewId: string }>();
   const [interview, setInterview] = useState<Interview | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading] = useState<boolean>(false);
   const [isWebcamEnabled, setIsWebcamEnabled] = useState<boolean>(false);
 
   const navigate = useNavigate();

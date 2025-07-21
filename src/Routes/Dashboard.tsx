@@ -10,7 +10,6 @@ import { Headings } from "@/components/Heading";
 import { db } from "@/Config/firebase.config";
 import { useAuth } from "@clerk/clerk-react";
 import type { Interview } from "@/Types/index";
-import { Skeleton } from "@/components/ui/skeleton";
 import { InterviewPin } from "@/components/Pin";
 export const Dashboard = () => {
   const { userId } = useAuth();
@@ -29,9 +28,10 @@ export const Dashboard = () => {
       interviewQuery,
       (snapshot) => {
         const interviewList: Interview[] = snapshot.docs.map((doc) => ({
-          id: doc.id,
           ...(doc.data() as Interview),
-        }));
+          id: doc.id,
+        }
+        ));
         setInterviews(interviewList);
         setLoading(false);
       },

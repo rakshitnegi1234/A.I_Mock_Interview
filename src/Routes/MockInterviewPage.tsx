@@ -79,19 +79,28 @@ export const MockInterviewPage = () => {
       </Alert>
 
       {/* Questions Section */}
-      {interview?.questions?.length > 0 ? (
-        <div className="mt-4 w-full flex flex-col items-start gap-6">
-          <h2 className="text-xl font-semibold text-gray-800">
-            {interview.questions.length} Questions for:{" "}
-            <span className="text-sky-600">{interview.position}</span>
-          </h2>
-          <QuestionForm questions={interview.questions} />
-        </div>
-      ) : (
-        <div className="text-center text-gray-500 text-sm mt-10">
-          No questions found for this interview.
-        </div>
-      )}
+      {interview?.questions?.length ? (
+  <div className="mt-6 w-full flex flex-col items-start gap-6 animate-fade-in">
+    <h2 className="text-2xl font-bold text-gray-900">
+      {interview.questions?.length} Question{interview.questions?.length > 1 ? "s" : ""} for:{" "}
+      <span className="text-sky-600">{interview.position}</span>
+    </h2>
+
+    <p className="text-gray-600 text-sm">
+      Try to answer each question clearly and confidently. You can record your answers and receive smart feedback.
+    </p>
+
+    <QuestionForm questions={interview.questions} />
+  </div>
+) : (
+  <div className="text-center text-gray-500 text-base mt-16 animate-fade-in">
+    <p className="text-lg font-medium">No questions found</p>
+    <p className="text-sm text-gray-400 mt-2">
+      Please check back later or regenerate the interview questions.
+    </p>
+  </div>
+)}
+
     </div>
   );
 };

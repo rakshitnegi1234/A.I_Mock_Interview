@@ -28,6 +28,11 @@ import {
   where,
 } from "firebase/firestore";
 
+type ResultType = {
+  transcript: string;
+  timestamp: number;
+};
+
 interface RecordAnswerProps {
   question: { question: string; answer: string };
   isWebCam: boolean;
